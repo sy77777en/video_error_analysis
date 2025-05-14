@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dream1K Evaluation Results</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .video-container { 
+            margin-bottom: 30px; 
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+        }
+        .video-info h3 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        .video-player {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .evaluation-result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .evaluation-result.correct {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+        .evaluation-result.incorrect {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+        .comment {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-style: italic;
+        }
+        .error-detail {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+            color: #bf360c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Dream1K Evaluation Results</h1>
+            <p>Click play below and read the caption. Videos with red highlights are marked incorrect.</p>
+        </div>
+        <div id="video-list"></div>
+    </div>
+    <script>
+        // URL prefix for video sources
+        const url_prefix = "https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/";
+
+        // List of videos and captions
+        const videos = [
+            {error: `The camera does not zoom in during the shot, it remains static in each shot.`, filename: "142.mp4", caption: `A group of people are swaying left and right with their hands raised high, while only a little boy stands, looking around at the others in confusion. The camera <span style="color:red">zooms in</span> on the boy's upper body; he takes a bite of the biscuit in his hand, and then excitedly raises his arms and starts to sway left and right too. The camera then switches to show the boy and many people next to him swaying together. Once again, the camera angle changes to capture the back of a woman swaying, as well as the sea of people in front of her moving in unison.` },
+            {error: `Initially the camera does not tilt down, it slightly rolls clockwise. In the second shot, the camera moves downward instead of tilting down.`, filename: "152.mp4", caption: `The camera <span style="color:red">tilts down</span> for an overhead shot, where an old man looks upward, pushed in the chest with a stick. He falls downward, and as the camera angle shifts to a low angle shot, a woman is seen holding the stick at the mouth of a well. The old man falls down into the well, and the camera then switches to the well's opening, where the woman gives a smile. The scene cuts to the ground level, where the woman takes a deep red hat and replaces the black hat on the head of a short man standing before her.` },
+            {error: `The camera does not pan from left to right; in fact, it trucks from left to right.`, filename: "287.mp4", caption: `The video shows a man with a briefcase on his back and a bunch of flowers in his left hand, walking towards a grave while making a phone call, as the camera <span style="color:red">pans from left to right</span> in the cemetery.` },
+            {error: `The camera does not move downward; in fact, it tilts downward and moves backward.`, filename: "357.mp4", caption: `The camera <span style="color:red">moves downward</span>, a group of people open a door and walk forward, a dog in front follows them, and then the camera switches to their backs.` },
+            {error: `No error.`, filename: "358.mp4", caption: `One person picks a fruit, puts it in their mouth to eat, and the camera pans upward.` },
+            {error: `No error.`, filename: "379.mp4", caption: `A person shifted their chair, reached out to take a plate, and continued walking forward. The seated man turned his head to look at him; the camera angle moved up. The man holding the plate turned his head to look at the seated man, swung his hand, and smashed the plate onto the head of the seated man. The seated man then walked forward with his hands covering his head, and the camera switched to a side view of the standing man.` },
+            {error: `The camera does not zoom in; in fact, the impact is caused by the transition of shot.`, filename: "435.mp4", caption: `The background is a forest. The woman reaches out to scoop out the white viscous material from the bowl and places it into the green basket behind her. The camera <span style="color:red">zooms in</span> on the object as it falls into the basket. The woman bends down to pick up another piece and continues to place it into the basket. The camera then switches to the woman tearing the white viscous material off the tree, following the movement with the shot.` },
+            {error: `The camera does not pan to the left; in fact, it moves leftward while panning right.s`, filename: "553.mp4", caption: `A man swims in the pool of a train carriage, then turns around to sit up, wipes the water off his face, and each takes a slice of watermelon to eat with the two men beside him. <span style="color:red">The camera pans to the left.</span>` },
+            {error: `The camera does not pan to the right; in fact, it pans to the left.`, filename: "565.mp4", caption: `The background is a vast expanse of grassland. In the distance, a person is descending from the sky with a paraglider, gliding toward the camera. With bent legs, they slide forward on the grassland. The camera <span style="color:red">pans to the right</span> as the person continues to glide. Next to them, another person is holding a phone to film the scene, while another man in a black short-sleeved shirt turns to look at the camera, walks a few steps to the right, and raises his hands to gesture.` },
+            {error: `The camera does not pan downward; in fact, it tilts upward.`, filename: "576.mp4", caption: `A person threw a watermelon into the gaping mouth of a hippopotamus, which then crushed the watermelon. The camera <span style="color:red">panned downward</span>, showing the watermelon juice flowing out. The background featured a pool with a forest behind it.` },
+            {error: `No error`, filename: "585.mp4", caption: `A pile of duck corpses is dumped from a basket into a pit in the ground. As the camera zooms out, a girl clad in blue sets down the basket, crouches down to press on the bodies of the ducks, and then pushes the adjacent soil over to bury them, while a small dog behind her turns its head to look over. The background features a woodland mountain landscape.` },
+            {error: `The camera does not move upward; in fact, it tilts upward.`, filename: "632.mp4", caption: `A baby is clutching a fork in its hand, trying to pick up fruit from a plate. The baby pokes at the fruit several times without success, until finally spearing a piece and bringing it towards its mouth. Then, the baby prods the plate a few times with the fork. The camera <span style="color:red">moves upwards</span> to capture the baby's entire body and head, as well as the motion of the baby using the fork to stab downwards.` },
+            {error: `The camera does not predominantly pans from left to right; in fact, it mainly trucks from left to right.`, filename: "649.mp4", caption: `In an ice house, the camera slowly <span style="color:red">pans from left to right</span>, displaying a variety of colorful ice sculptures within the ice house.` },
+            {error: `No error.`, filename: "659.mp4", caption: `On a grassy soccer field, a pair of feet wearing black soccer shoes approach the ball. The left foot nudges the ball to the right, and then the right foot pulls back to scoop the ball up. After that, the right foot juggles the ball twice, followed by the left and right feet alternately keeping the ball in the air. The video almost exclusively captures the person's shadow and the movement of the ball. Then, the camera gradually moves upward from the feet, sequentially showing the lower legs, knees, thighs clad in black shorts, hands, and the upper body dressed in a blue T-shirt. Meanwhile, the person continues to juggle the ball with alternating left and right feet. Just before the video ends, the individual turns their back to the camera and flicks the ball with the lower leg.` },
+            {error: ``, filename: "", caption: `` },
+            {error: ``, filename: "", caption: `` },
+            {error: ``, filename: "", caption: `` },
+            {error: ``, filename: "", caption: `` },
+            {error: ``, filename: "", caption: `` },
+            {error: ``, filename: "", caption: `` }
+        ];
+
+        function renderVideos() {
+            const list = document.getElementById("video-list");
+            videos.forEach((v, idx) => {
+                const hasRed = v.caption.includes('style="color:red"');
+                const status = hasRed ? 'incorrect' : 'correct';
+                const div = document.createElement("div");
+                div.className = "video-container";
+                div.innerHTML = `
+                    <div class="video-info">
+                        <h3>Video ${idx+1}: ${v.filename.replace(/\.mp4$/, "")}<\/h3>
+                        <video class="video-player" controls>
+                            <source src="${url_prefix}${v.filename}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        <\/video>
+                        <div class="evaluation-result ${status}">Evaluation: ${status === 'correct' ? 'Correct' : 'Incorrect'}<\/div>
+                        <div class="comment">
+                            ${v.caption}
+                        <\/div>
+                        <div class="error-detail">${v.error}</div>
+                    <\/div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        renderVideos();
+    </script>
+</body>
+</html>
