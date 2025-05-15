@@ -1,0 +1,556 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>VidComposition Evaluation Results</title>
+        <style>
+            body { 
+                font-family: Arial, sans-serif; 
+                margin: 20px;
+                background-color: #f5f5f5;
+            }
+            .container { 
+                max-width: 1200px; 
+                margin: 0 auto;
+                background-color: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .header { 
+                text-align: center; 
+                margin-bottom: 30px;
+                padding: 20px;
+                background-color: #f8f9fa;
+                border-radius: 8px;
+            }
+            .stats { 
+                background-color: #f0f0f0; 
+                padding: 15px; 
+                border-radius: 5px; 
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            .video-container { 
+                margin-bottom: 30px; 
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                background-color: white;
+            }
+            .video-info { margin-bottom: 15px; }
+            .video-player {
+                width: 100%;
+                max-width: 800px;
+                margin: 20px 0;
+                border-radius: 4px;
+            }
+            .metadata {
+                background-color: #f8f9fa;
+                padding: 15px;
+                border-radius: 4px;
+                margin-top: 15px;
+            }
+            .metadata-item {
+                margin: 5px 0;
+            }
+            .motion-badge {
+                display: inline-block;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 14px;
+                margin-left: 10px;
+            }
+            .evaluation-result {
+                margin-top: 15px;
+                padding: 10px;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            .correct { 
+                background-color: #e8f5e9; 
+                color: #2e7d32;
+                border: 1px solid #a5d6a7;
+            }
+            .incorrect { 
+                background-color: #ffebee; 
+                color: #c62828;
+                border: 1px solid #ef9a9a;
+            }
+            .not-evaluated { 
+                background-color: #f5f5f5; 
+                color: #616161;
+                border: 1px solid #e0e0e0;
+            }
+            .comment {
+                margin-top: 10px;
+                padding: 10px;
+                background-color: #f8f9fa;
+                border-radius: 4px;
+                font-style: italic;
+            }
+            .filter-controls {
+                margin: 20px 0;
+                padding: 15px;
+                background-color: #f8f9fa;
+                border-radius: 8px;
+            }
+            .filter-button {
+                padding: 8px 16px;
+                margin: 0 5px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+                background-color: #2196F3;
+                color: white;
+            }
+            .filter-button.active {
+                background-color: #1976D2;
+            }
+            .explanation {
+                padding: 10px 16px;
+                margin: 12px 0 0 0;
+                border-radius: 6px;
+                font-size: 18px;
+                font-family: inherit;
+            }
+            .explanation.correct {
+                background-color: #e8f5e9;
+                border-left: 6px solid #43a047;
+                color: #2e7d32;
+            }
+            .explanation.incorrect {
+                background-color: #fff4e6;
+                border-left: 6px solid #ffa726;
+                color: #b45309;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>VidComposition Evaluation Results</h1>
+                <p>View and Filter Evaluation Results</p>
+            </div>
+            <div class="stats">
+                <h2>Evaluation Statistics</h2>
+                <p>Correct: <span id="correct-count">0</span> | Incorrect: <span id="incorrect-count">0</span></p>
+                <p>Accuracy: <span id="accuracy">0</span>%</p>
+            </div>
+            <div class="filter-controls">
+                <button class="filter-button active" onclick="filterResults('all')">All</button>
+                <button class="filter-button" onclick="filterResults('correct')">Correct</button>
+                <button class="filter-button" onclick="filterResults('incorrect')">Incorrect</button>
+                <button class="filter-button" onclick="filterResults('not_evaluated')">Not Evaluated</button>
+            </div>
+    
+            <div class="video-container" id="video-0" data-evaluation="incorrect">
+                <div class="video-info">
+                    <h3>Video 1: 0ezUzigjn9M_236.8_262.0.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/0ezUzigjn9M_236.8_262.0.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. pan up, static shot</div>
+                        <div>B. zoom out, static shot</div>
+                        <div>C. pan right, static shot</div>
+                        <div>D. pan down, static shot</div>
+                    </div>
+                    <div class="answer">Answer:A</div>
+                    <div class="explanation">That’s not correct—the camera clearly pans right between 9s and 11s, so option C is also valid. You should select both A and C.</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-1" data-evaluation="incorrect">
+                <div class="video-info">
+                    <h3>Video 2: 0fS-ess5_j4_106.2_123.1.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/0fS-ess5_j4_106.2_123.1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. pan right, pan down</div>
+                        <div>B. zoom out, static shot</div>
+                        <div>C. zoom in, pan left</div>
+                        <div>D. pan down, pan left</div>
+                    </div>
+                    <div class="answer">Answer: D</div>
+                    <div class="explanation">That's not correct-the camera tilts down while panning right during 8s ~ 10s so option A is also valid. You should select both A and D.</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-2" data-evaluation="incorrect">
+                <div class="video-info">
+                    <h3>Video 3: 0fS-ess5_j4_138.7_161.0.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/0fS-ess5_j4_138.7_161.0.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. zoom out, pan left</div>
+                        <div>B. static shot, pan down</div>
+                        <div>C. pan up, pan down</div>
+                        <div>D. pan right, pan down</div>
+                    </div>
+                    <div class="answer">Answer: B</div>
+                    <div class="explanation">That’s not correct—the camera clearly tilts up between 1s and 3s, so option C is also valid. You should select both B and C.</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-3" data-evaluation="correct">
+                <div class="video-info">
+                    <h3>Video 4: 0q7nKjcm-0c_2.3_36.3.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/0q7nKjcm-0c_2.3_36.3.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. zoom out, zoom in</div>
+                        <div>B. pan up, pan right</div>
+                        <div>C. pan left, pan right</div>
+                        <div>D. static shot, pan right</div>
+                    </div>
+                    <div class="answer">Answer: D</div>
+                    <div class="explanation">Correct</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-4" data-evaluation="incorrect">
+                <div class="video-info">
+                    <h3>Video 5: 0q7nKjcm-0c_237.2_264.6.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/0q7nKjcm-0c_237.2_264.6.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. zoom out, pan up</div>
+                        <div>B. pan up, pan down</div>
+                        <div>C. zoom in, static shot</div>
+                        <div>D. pan right, pan up</div>
+                    </div>
+                    <div class="answer">Answer: B</div>
+                    <div class="explanation">That’s not correct—the camera initially remains static, and zooms in at the end so option C is also valid. You should select both B and C.</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-5" data-evaluation="incorrect">
+                <div class="video-info">
+                    <h3>Video 6: 0q7nKjcm-0c_353.5_391.2.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/0q7nKjcm-0c_353.5_391.2.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. pan left, static shot</div>
+                        <div>B. zoom out, pan right</div>
+                        <div>C. pan up, pan right</div>
+                        <div>D. zoom in, pan right</div>
+                    </div>
+                    <div class="answer">Answer: A</div>
+                    <div class="explanation">That’s not correct—the camera initially tilts up thend pans right so option C is also valid. You should select both A and C.</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-6" data-evaluation="incorrect">
+                <div class="video-info">
+                    <h3>Video 7: 0q7nKjcm-0c_755.5_781.0.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/0q7nKjcm-0c_755.5_781.0.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. pan down, static shot</div>
+                        <div>B. zoom out, zoom in</div>
+                        <div>C. pan right, zoom in</div>
+                        <div>D. pan up, static shot</div>
+                    </div>
+                    <div class="answer">Answer: B</div>
+                    <div class="explanation">That’s not correct—the camera tilts up during 11s ~ 13s and remains static during 16s ~ 17s so option D is also valid. You should select both B and D.</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-7" data-evaluation="correct">
+                <div class="video-info">
+                    <h3>Video 8: 1BrPvIFGgLs_142.4_170.1.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/1BrPvIFGgLs_142.4_170.1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. pan right, static shot</div>
+                        <div>B. pan up, static shot</div>
+                        <div>C. pan left, static shot</div>
+                        <div>D. zoom in, pan right</div>
+                    </div>
+                    <div class="answer">Answer: A</div>
+                    <div class="explanation">Correct</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-8" data-evaluation="correct">
+                <div class="video-info">
+                    <h3>Video 9: 1BrPvIFGgLs_224.6_248.6.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/1BrPvIFGgLs_224.6_248.6.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. static shot, zoom in</div>
+                        <div>B. pan down, zoom in</div>
+                        <div>C. pan up, zoom in</div>
+                        <div>D. zoom out, zoom in</div>
+                    </div>
+                    <div class="answer">Answer: A</div>
+                    <div class="explanation">Correct</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-9" data-evaluation="correct">
+                <div class="video-info">
+                    <h3>Video 10: 1BrPvIFGgLs_540.8_569.8.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/1BrPvIFGgLs_540.8_569.8.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. pan down, zoom in</div>
+                        <div>B. zoom out, zoom in</div>
+                        <div>C. static shot, zoom in</div>
+                        <div>D. pan left, static shot</div>
+                    </div>
+                    <div class="answer">Answer: C</div>
+                    <div class="explanation">Correct</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-10" data-evaluation="incorrect">
+                <div class="video-info">
+                    <h3>Video 11: 1NYfGL9OcX8_116.9_132.1.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/1NYfGL9OcX8_116.9_132.1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. pan left, static shot</div>
+                        <div>B. zoom out, pan right</div>
+                        <div>C. pan down, pan right</div>
+                        <div>D. pan up, pan right</div>
+                    </div>
+                    <div class="answer">Answer: A</div>
+                    <div class="explanation">That's not correct-the camera trucks left while panning right instead of panning left at the end. So option A is invalid.</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-11" data-evaluation="incorrect">
+                <div class="video-info">
+                    <h3>Video 12: 1NYfGL9OcX8_12.8_26.7.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/1NYfGL9OcX8_12.8_26.7.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. pan up, static shot, zoom in</div>
+                        <div>B. pan left, static shot, zoom out</div>
+                        <div>C. pan right, static shot</div>
+                        <div>D. zoom out, pan left</div>
+                    </div>
+                    <div class="answer">Answer: B</div>
+                    <div class="explanation">That's not correct-the camera initially trucks left instead of panning left. So option B is invalid.</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-12" data-evaluation="correct">
+                <div class="video-info">
+                    <h3>Video 13: 1NYfGL9OcX8_26.7_41.8.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/1NYfGL9OcX8_26.7_41.8.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. zoom out, pan left</div>
+                        <div>B. pan up, pan left</div>
+                        <div>C. zoom in, pan down</div>
+                        <div>D. pan down, pan right</div>
+                    </div>
+                    <div class="answer">Answer: D</div>
+                    <div class="explanation">Correct</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-13" data-evaluation="incorrect">
+                <div class="video-info">
+                    <h3>Video 14: 1NYfGL9OcX8_41.8_55.5.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/1NYfGL9OcX8_41.8_55.5.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. zoom in, static shot</div>
+                        <div>B. pan up, pan right</div>
+                        <div>C. pan left, pan down</div>
+                        <div>D. pan down, pan right</div>
+                    </div>
+                    <div class="answer">Answer: D</div>
+                    <div class="explanation">That's not correct-the camera trucks right instead of panning right so option D is invalid.</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-14" data-evaluation="incorrect">
+                <div class="video-info">
+                    <h3>Video 15: 1NYfGL9OcX8_66.8_80.0.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/1NYfGL9OcX8_66.8_80.0.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. pan right, pan left</div>
+                        <div>B. zoom in, pan up</div>
+                        <div>C. pan down, pan left</div>
+                        <div>D. static shot, pan left</div>
+                    </div>
+                    <div class="answer">Answer: D</div>
+                    <div class="explanation">That's not correct-the camera pans right at the end so option A is also valid. You should select both A and D.</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-15" data-evaluation="incorrect">
+                <div class="video-info">
+                    <h3>Video 16: 1NYfGL9OcX8_80.0_91.7.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/1NYfGL9OcX8_80.0_91.7.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. pan right, pan left, static shot</div>
+                        <div>B. zoom out, pan left, static shot</div>
+                        <div>C. static shot, pan left</div>
+                        <div>D. pan up, pan right</div>
+                    </div>
+                    <div class="answer">Answer: A</div>
+                    <div class="explanation">That's not correct-option C is the subset of option A. If you select A, you should also select C.</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-16" data-evaluation="correct">
+                <div class="video-info">
+                    <h3>Video 17: 2ffSg96PSas_0.2_12.2.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/2ffSg96PSas_0.2_12.2.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. static shot, pan left</div>
+                        <div>B. pan up, pan left</div>
+                        <div>C. zoom out, static shot</div>
+                        <div>D. pan down, pan left</div>
+                    </div>
+                    <div class="answer">Answer: A</div>
+                    <div class="explanation">Correct</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-17" data-evaluation="correct">
+                <div class="video-info">
+                    <h3>Video 18: 2ffSg96PSas_12.2_21.3.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/2ffSg96PSas_12.2_21.3.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. pan up, zoom in</div>
+                        <div>B. pan down, zoom in</div>
+                        <div>C. zoom in, pan right</div>
+                        <div>D. zoom out, zoom in</div>
+                    </div>
+                    <div class="answer">Answer: C</div>
+                    <div class="explanation">Correct</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-18" data-evaluation="correct">
+                <div class="video-info">
+                    <h3>Video 19: 2ffSg96PSas_21.3_53.2.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/2ffSg96PSas_21.3_53.2.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. static shot, zoom in</div>
+                        <div>B. zoom out, static shot</div>
+                        <div>C. pan left, static shot</div>
+                        <div>D. pan up, zoom in</div>
+                    </div>
+                    <div class="answer">Answer: A</div>
+                    <div class="explanation">Correct</div>
+                </div>
+            </div>
+        
+            <div class="video-container" id="video-19" data-evaluation="correct">
+                <div class="video-info">
+                    <h3>Video 20: 2ffSg96PSas_76.2_98.1.mp4</h3>
+                    <video class="video-player" controls>
+                        <source src="https://huggingface.co/datasets/syCen/video_error_analysis/resolve/main/2ffSg96PSas_76.2_98.1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="options-list">
+                        <div>A. zoom out, static shot</div>
+                        <div>B. static shot, pan left</div>
+                        <div>C. pan right, pan left</div>
+                        <div>D. zoom in, pan left</div>
+                    </div>
+                    <div class="answer">Answer: B</div>
+                    <div class="explanation">Correct</div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function updateStats() {
+                const correct = document.querySelectorAll('.video-container[data-evaluation="correct"]').length;
+                const incorrect = document.querySelectorAll('.video-container[data-evaluation="incorrect"]').length;
+                const total = correct + incorrect;
+                const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+                
+                document.getElementById('correct-count').textContent = correct;
+                document.getElementById('incorrect-count').textContent = incorrect;
+                document.getElementById('accuracy').textContent = accuracy;
+            }
+            
+            function filterResults(filter) {
+                // Update button states
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                event.target.classList.add('active');
+                
+                // Show/hide videos based on filter
+                document.querySelectorAll('.video-container').forEach(container => {
+                    if (filter === 'all' || container.dataset.evaluation === filter) {
+                        container.style.display = 'block';
+                    } else {
+                        container.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Initialize stats
+            updateStats();
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.video-container').forEach(function(container) {
+                    var evalType = container.getAttribute('data-evaluation');
+                    var explanation = container.querySelector('.explanation');
+                    if (explanation) {
+                        explanation.classList.remove('correct', 'incorrect');
+                        if (evalType === 'correct') {
+                            explanation.classList.add('correct');
+                        } else if (evalType === 'incorrect') {
+                            explanation.classList.add('incorrect');
+                        }
+                    }
+                });
+            });
+        </script>
+    </body>
+    </html>
+    
